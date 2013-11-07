@@ -7,60 +7,116 @@
  */
 
 (function($) {
-	$.fn.extend({
-		grandchildren: function() {
-			return this.children().children();
-		},
+    $.fn.extend({
+        grandchildren: function() {
+            return this.children().children();
+        },
 
-		greatGrandchildren: function() {
-			return this.grandchildren().children();
-		},
+        greatGrandchildren: function() {
+            return this.grandchildren().children();
+        },
 
-		grandparent: function() {
-			return this.parent().parent();
-		},
+        nthGrandchildren: function (n) { //
+            var nthGrandchildren = this.children();
+            while (n-- > 0) {
+                nthGrandchildren = nthGrandchildren.children();
+            }
+            return nthGrandchildren;
+        },
 
-		greatGrandparent: function() {
-			return this.grandparent().parent();
-		},
+        grandparent: function() {
+            return this.parent().parent();
+        },
 
-		aunts: function() {
-			return this.parent().siblings();
-		},
+        greatGrandparent: function() {
+            return this.grandparent().parent();
+        },
 
-		prevAunt: function() {
-			return this.parent().prev();
-		},
+        nthGrandparent: function (n) { //
+            var nthGrandparent = this.parent();
+            while (n-- > 0) {
+                nthGrandparent = nthGrandparent.parent();
+            }
+            return nthGrandparent;
+        },
 
-		prevAunts: function() {
-			return this.parent().prevAll();
-		},
+        aunts: function() {
+            return this.parent().siblings();
+        },
 
-		nextAunt: function() {
-			return this.parent().next();
-		},
+        greatAunts: function () {
+            return this.parent().aunts();
+        },
 
-		nextAunts: function() {
-			return this.parent().nextAll();
-		},
+        nthGreatAunts: function (n) {
+            return this.nthGrandparent(n).siblings();
+        },
 
-		cousins: function() {
-			return this.aunts().children();
-		},
+        prevAunt: function() {
+            return this.parent().prev();
+        },
 
-		prevCousins: function() {
-			// Return closest cousins first (by document order)
-			return this.prevAunts().map( function () {
-				return $( this ).children().get().reverse();
-			} );
-		},
+        prevAunts: function() {
+            return this.parent().prevAll();
+        },
 
-		nextCousins: function() {
-			return this.nextAunts().children();
-		},
+        nextAunt: function() {
+            return this.parent().next();
+        },
+
+        nextAunts: function() {
+            return this.parent().nextAll();
+        },
+
+        oldestSibling: function() {
+            return this.olderSiblings().first();
+        },
+
+        youngestSibling: function () {
+            return this.youngerSiblings().last();
+        },
+
+        cousins: function() {
+            return this.aunts().children();
+        },
+
+        prevCousins: function() {
+            // Return closest cousins first (by document order)
+            return this.prevAunts().map( function () {
+                return $( this ).children().get().reverse();
+            } );
+        },
+
+        nextCousins: function() {
+            return this.nextAunts().children();
+        },
+
+        secondCousins: function(){
+            return this.grandparent().siblings().grandchildren();
+        },
+
+        thirdCousins: function() {
+            return this.greatGrandparent().siblings().greatGrandchildren();
+        },
+
+        nthCousins: function(n) {
+            return this.nthGrandparent(n - 1).siblings().nthGrandchildren(n - 1);
+        },
+
+        nthCousinsMthRemoved: function (n, m) {
+            return n.nthCousins(n).nthGrandchildren(m - 1).add(n.nthGrandparent(m - 1).nthCousins(n));
+        },
 
 		nieces: function() {
 			return this.siblings().children();
+		},
+
+		greatNieces: function() {
+		    return this.siblings().grandchildren();
+		},
+
+		nthGreatNieces: function (n) {
+		    return this.siblings().nthGrandchildren(n);
 		},
 
 		prevNieces: function() {
@@ -76,15 +132,25 @@
 	});
 
 	$.fn.uncles = $.fn.aunts;
+	$.fn.greatUncles = $.fn.greatAunts; //
+	$.fn.nthGreatUncles = $.fn.nthGreatAunts; //
 	$.fn.prevUncle = $.fn.prevAunt;
 	$.fn.prevUncles = $.fn.prevAunts;
 	$.fn.nextUncle = $.fn.nextAunt;
 	$.fn.nextUncles = $.fn.nextAunts;
 
 	$.fn.nephews = $.fn.nieces;
+	$.fn.greatNephews = $.fn.greatNieces; //
+	$.fn.nthGreatNephews = $.fn.nthGreatNieces; //
 	$.fn.prevNephews = $.fn.prevNieces;
 	$.fn.nextNephews = $.fn.nextNieces;
 
 	$.fn.brothers = $.fn.sisters = $.fn.siblings;
+	$.fn.olderBrothers = $.fn.olderSisters = $.fn.olderSiblings = $.fn.prevAll; //
+	$.fn.youngerBrothers = $.fn.youngerSisters = $.fn.youngerSiblings = $.fn.nextAll; //
+	$.fn.youngestBrother = $.fn.youngestSister = $.fn.youngestSibling; //
+	$.fn.oldestBrother = $.fn.oldestSister = $.fn.oldestSibling; //
+
+	$.fn.sons = $.fn.daughters = $.fn.children; //
 	$.fn.father = $.fn.mother = $.fn.parent;
 })(jQuery);
